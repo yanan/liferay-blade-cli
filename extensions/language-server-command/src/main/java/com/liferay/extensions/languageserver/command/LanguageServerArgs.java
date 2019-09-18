@@ -31,7 +31,14 @@ public class LanguageServerArgs extends BaseArgs {
 		return _port;
 	}
 
+	public boolean isSocketServer() {
+		return _socketServer;
+	}
+
 	@Parameter(description = "Port", names = {"-p", "--port"})
 	private int _port = -1;
+
+	@Parameter(description = "socket server mode", names = {"-ss", "--socket-server"})
+	private boolean _socketServer = false;
 
 }

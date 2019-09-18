@@ -19,9 +19,11 @@ package com.liferay.extensions.languageserver.command;
 import com.liferay.blade.cli.command.BaseCommand;
 import com.liferay.extensions.languageserver.LiferayLanguageServer;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import java.util.Collections;
@@ -50,10 +52,56 @@ public class LanguageServerCommand extends BaseCommand<LanguageServerArgs> {
 			return;
 		}
 
-		Socket socket = new Socket("localhost", port);
+		boolean socketServer = languageServerArgs.isSocketServer();
 
-		InputStream in = socket.getInputStream();
-		OutputStream out = socket.getOutputStream();
+		if (socketServer) {
+			ServerSocket serverSocket = new ServerSocket(port);
+
+			Thread socketThread = new Thread(
+				() -> {
+					try {
+						_socket = serverSocket.accept();
+					}
+					catch (IOException ioe) {
+						_addError(ioe.getMessage());
+					}
+					finally {
+						try {
+							serverSocket.close();
+						}
+						catch (IOException ioe) {
+							_addError(ioe.getMessage());
+						}
+					}
+				});
+
+			socketThread.start();
+
+			try {
+				socketThread.join();
+			}
+			catch (InterruptedException ie) {
+				_addError(ie.getMessage());
+
+				Thread thread = Thread.currentThread();
+
+				thread.interrupt();
+
+				return;
+			}
+
+			if (_socket == null) {
+				_addError("Socket connection failed.");
+
+				return;
+			}
+		}
+		else {
+			_socket = new Socket("localhost", port);
+		}
+
+		InputStream in = _socket.getInputStream();
+		OutputStream out = _socket.getOutputStream();
 
 		LiferayLanguageServer server = new LiferayLanguageServer();
 
@@ -74,5 +122,7 @@ public class LanguageServerCommand extends BaseCommand<LanguageServerArgs> {
 	private void _addError(String msg) {
 		getBladeCLI().addErrors("languageServer", Collections.singleton(msg));
 	}
+
+	private Socket _socket;
 
 }
