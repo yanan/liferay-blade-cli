@@ -36,6 +36,7 @@ import org.eclipse.lsp4j.DidCloseTextDocumentParams;
 import org.eclipse.lsp4j.DidOpenTextDocumentParams;
 import org.eclipse.lsp4j.DidSaveTextDocumentParams;
 import org.eclipse.lsp4j.PublishDiagnosticsParams;
+import org.eclipse.lsp4j.TextDocumentContentChangeEvent;
 import org.eclipse.lsp4j.TextDocumentIdentifier;
 import org.eclipse.lsp4j.TextDocumentItem;
 import org.eclipse.lsp4j.jsonrpc.messages.Either;
@@ -57,13 +58,20 @@ public class LiferayTextDocumentService implements TextDocumentService {
 
 		PropertiesCompletion propertiesCompletion = new PropertiesCompletion(completionParams);
 
-		List<CompletionItem> completionItems = propertiesCompletion.getCompletions();
+		List<CompletionItem> completionItems = propertiesCompletion.getCompletions(_currentContent);
 
 		return CompletableFuture.supplyAsync(() -> Either.forLeft(completionItems));
 	}
 
 	@Override
 	public void didChange(DidChangeTextDocumentParams didChangeTextDocumentParams) {
+		List<TextDocumentContentChangeEvent> contentChangeEvents = didChangeTextDocumentParams.getContentChanges();
+
+		TextDocumentContentChangeEvent contentChangeEvnet = contentChangeEvents.get(0);
+
+		String currentContent = contentChangeEvnet.getText();
+
+		_currentContent = currentContent;
 	}
 
 	@Override
@@ -112,6 +120,7 @@ public class LiferayTextDocumentService implements TextDocumentService {
 		}
 	}
 
+	private String _currentContent;
 	private LiferayLanguageServer _liferayLanguageServer;
 
 }
