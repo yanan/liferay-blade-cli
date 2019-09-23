@@ -128,6 +128,7 @@ public class PropertiesCompletion {
 
 					CompletionItem completionItem = new CompletionItem(key);
 
+					completionItem.setKind(CompletionItemKind.Property);
 					completionItem.setDetail(comment);
 
 					completionItems.add(completionItem);
