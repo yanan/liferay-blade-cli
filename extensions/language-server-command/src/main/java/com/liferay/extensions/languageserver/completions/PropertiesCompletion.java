@@ -22,6 +22,7 @@ import com.liferay.extensions.languageserver.properties.PortalProperties;
 import com.liferay.extensions.languageserver.properties.PropertiesFile;
 import com.liferay.extensions.languageserver.properties.PropertyPair;
 import com.liferay.extensions.languageserver.services.Service;
+import com.liferay.extensions.languageserver.util.FileUtil;
 
 import java.io.File;
 
@@ -72,9 +73,16 @@ public class PropertiesCompletion {
 	public List<CompletionItem> getCompletions(String currentContent) {
 		List<CompletionItem> completionItems = new ArrayList<>();
 
-		String[] lines = currentContent.split("\r\n");
+		String[] lines = null;
 
-		if ((_propertiesFile != null) && (_line <= lines.length)) {
+		if (currentContent != null) {
+			lines = currentContent.split(System.lineSeparator());
+		}
+		else {
+			lines = FileUtil.readLinesFromFile(_file);
+		}
+
+		if (_propertiesFile != null) {
 			String line = "";
 
 			if (_line < lines.length) {
