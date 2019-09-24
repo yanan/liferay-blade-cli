@@ -73,7 +73,7 @@ public abstract class PropertiesFile extends LiferayLSPFile {
 					if (value.equals("folder")) {
 						valueService = new FolderService(getFile());
 					}
-					else if (value.equals("boolean")) {
+					else if (value.equals("boolean") || value.equals("true") || value.equals("false")) {
 						valueService = new BooleanService(getFile());
 					}
 					else if (value.startsWith("Custom")) {
@@ -96,7 +96,11 @@ public abstract class PropertiesFile extends LiferayLSPFile {
 
 				PropertiesConfigurationLayout layout = config.getLayout();
 
-				propertyPair.setComment(layout.getComment(key));
+				String comment = layout.getComment(key);
+
+				comment = comment.replaceAll("#", "");
+
+				propertyPair.setComment(comment);
 
 				propertyPairs.add(propertyPair);
 			}
