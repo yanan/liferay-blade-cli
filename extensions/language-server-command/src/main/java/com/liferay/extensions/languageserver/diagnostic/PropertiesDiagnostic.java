@@ -29,6 +29,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import org.eclipse.lsp4j.Diagnostic;
 import org.eclipse.lsp4j.DiagnosticSeverity;
 import org.eclipse.lsp4j.Position;
@@ -109,7 +111,7 @@ public class PropertiesDiagnostic {
 
 								if (valueService != null) {
 									try {
-										valueService.validate(value);
+										valueService.validate(StringEscapeUtils.unescapeJava(value));
 									}
 									catch (Exception e) {
 										int valueStart = line.indexOf(value);

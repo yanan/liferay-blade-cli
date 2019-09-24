@@ -18,6 +18,8 @@ package com.liferay.extensions.languageserver.services;
 
 import java.io.File;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 /**
  * @author Terry Jia
  */
@@ -37,6 +39,8 @@ public class StringArrayService extends Service {
 	@Override
 	public void validate(String value) throws Exception {
 		for (String possibleValue : _possibleValues) {
+			possibleValue = StringEscapeUtils.unescapeJava(possibleValue);
+
 			if (possibleValue.equals(value)) {
 				return;
 			}

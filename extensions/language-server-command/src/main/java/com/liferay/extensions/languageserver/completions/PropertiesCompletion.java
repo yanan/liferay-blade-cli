@@ -34,6 +34,8 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import org.eclipse.lsp4j.CompletionItem;
 import org.eclipse.lsp4j.CompletionItemKind;
 import org.eclipse.lsp4j.CompletionParams;
@@ -110,6 +112,8 @@ public class PropertiesCompletion {
 					Stream::of
 				).map(
 					possibleValue -> {
+						possibleValue = StringEscapeUtils.escapeJava(possibleValue);
+
 						CompletionItem completionItem = new CompletionItem(possibleValue);
 
 						completionItem.setKind(CompletionItemKind.Property);
