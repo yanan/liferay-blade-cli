@@ -44,6 +44,10 @@ public abstract class PropertiesFile extends LiferayLSPFile {
 		super(file);
 	}
 
+	public boolean checkPossibleKeys() {
+		return false;
+	}
+
 	public List<PropertyPair> getProperties() {
 		List<PropertyPair> propertyPairs = new ArrayList<>();
 
@@ -98,9 +102,11 @@ public abstract class PropertiesFile extends LiferayLSPFile {
 
 				String comment = layout.getComment(key);
 
-				comment = comment.replaceAll("#", "");
+				if (comment != null) {
+					comment = comment.replaceAll("#", "");
 
-				propertyPair.setComment(comment);
+					propertyPair.setComment(comment);
+				}
 
 				propertyPairs.add(propertyPair);
 			}

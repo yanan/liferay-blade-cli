@@ -27,6 +27,10 @@ public class PortalProperties extends PropertiesFile {
 		super(file);
 	}
 
+	public boolean checkPossibleKeys() {
+		return true;
+	}
+
 	@Override
 	public String getStorageFileName() {
 		return "/portal.properties";

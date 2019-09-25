@@ -90,7 +90,7 @@ public class PropertiesDiagnostic {
 						}
 					}
 
-					if (!findKey) {
+					if (!findKey && propertiesFile.checkPossibleKeys()) {
 						int keyStart = line.indexOf(key);
 
 						Diagnostic diagnostic = new Diagnostic();
@@ -114,7 +114,9 @@ public class PropertiesDiagnostic {
 										valueService.validate(StringEscapeUtils.unescapeJava(value));
 									}
 									catch (Exception e) {
-										int valueStart = line.indexOf(value);
+										int equalIndex = line.indexOf("=");
+
+										int valueStart = line.indexOf(value, equalIndex);
 
 										Diagnostic diagnostic = new Diagnostic();
 

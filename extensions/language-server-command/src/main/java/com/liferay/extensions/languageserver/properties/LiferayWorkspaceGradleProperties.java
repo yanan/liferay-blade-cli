@@ -27,6 +27,10 @@ public class LiferayWorkspaceGradleProperties extends PropertiesFile {
 		super(file);
 	}
 
+	public boolean checkPossibleKeys() {
+		return true;
+	}
+
 	@Override
 	public String getStorageFileName() {
 		return "/liferay-workspace-gradle.properties";

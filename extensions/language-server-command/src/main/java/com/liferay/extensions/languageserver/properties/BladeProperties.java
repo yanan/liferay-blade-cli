@@ -27,6 +27,10 @@ public class BladeProperties extends PropertiesFile {
 		super(file);
 	}
 
+	public boolean checkPossibleKeys() {
+		return true;
+	}
+
 	@Override
 	public String getStorageFileName() {
 		return "/.blade.properties";
