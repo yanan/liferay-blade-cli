@@ -21,6 +21,8 @@ import com.liferay.extensions.languageserver.properties.LiferayWorkspaceGradlePr
 import com.liferay.extensions.languageserver.properties.PortalProperties;
 import com.liferay.extensions.languageserver.properties.PropertiesFile;
 import com.liferay.extensions.languageserver.properties.PropertyPair;
+import com.liferay.extensions.languageserver.properties.LiferayPluginPackageProperties;
+import com.liferay.extensions.languageserver.properties.CoreLanguageProperties;
 import com.liferay.extensions.languageserver.services.Service;
 import com.liferay.extensions.languageserver.util.FileUtil;
 
@@ -160,6 +162,8 @@ public class PropertiesDiagnostic {
 		propertiesFiles.add(new LiferayWorkspaceGradleProperties(file));
 		propertiesFiles.add(new BladeProperties(file));
 		propertiesFiles.add(new PortalProperties(file));
+		propertiesFiles.add(new LiferayPluginPackageProperties(file));
+		propertiesFiles.add(new CoreLanguageProperties(file));
 
 		return propertiesFiles;
 	}
