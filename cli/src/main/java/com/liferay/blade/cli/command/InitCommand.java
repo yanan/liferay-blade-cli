@@ -211,34 +211,52 @@ public class InitCommand extends BaseCommand<InitArgs> {
 
 				break;
 			case "7.3":
-				initArgs.setLiferayVersion("portal-7.3-ga4");
+				initArgs.setLiferayVersion("portal-7.3-ga8");
 
 				break;
 			case "7.4":
-				initArgs.setLiferayVersion("portal-7.4-ga1");
+				initArgs.setLiferayVersion("portal-7.4-ga2");
 
 				break;
 		}
 
-		String workspaceProductKey = initArgs.getLiferayVersion();
+		String liferayVersion;
+		String workspaceProductKey;
 
-		Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
+		if (!mavenBuild) {
+			workspaceProductKey = initArgs.getLiferayVersion();
 
-		Object productInfoObject = productInfos.get(workspaceProductKey);
+			if (_legacyProductKeys.contains(workspaceProductKey)) {
+				_addError(
+					"This version of blade does not support " + workspaceProductKey + ". Please use blade 3.9.2 to " +
+						"initialize a workspace with this version. https://bit.ly/3lVgTeH");
 
-		if (productInfoObject == null) {
-			_addError("Unable to get product info for selected version " + workspaceProductKey);
+				return;
+			}
 
-			return;
+			Map<String, Object> productInfos = BladeUtil.getProductInfos(initArgs.isTrace(), bladeCLI.error());
+
+			Object productInfoObject = productInfos.get(workspaceProductKey);
+
+			if (productInfoObject == null) {
+				_addError("Unable to get product info for selected version " + workspaceProductKey);
+
+				return;
+			}
+
+			ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
+
+			Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
+
+			liferayVersion = new String(
+				targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor() + "." +
+					targetPlatformVersion.getMicro());
 		}
+		else {
+			liferayVersion = initArgs.getLiferayVersion();
 
-		ProductInfo productInfo = new ProductInfo((Map<String, String>)productInfoObject);
-
-		Version targetPlatformVersion = _makeCompatibleVersion(productInfo.getTargetPlatformVersion());
-
-		String liferayVersion = new String(
-			targetPlatformVersion.getMajor() + "." + targetPlatformVersion.getMinor() + "." +
-				targetPlatformVersion.getMicro());
+			workspaceProductKey = liferayVersion;
+		}
 
 		projectTemplatesArgs.setLiferayVersion(liferayVersion);
 
@@ -360,14 +378,14 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				return true;
 			}
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 		}
 		finally {
 			if (in != null) {
 				try {
 					in.close();
 				}
-				catch (Exception e) {
+				catch (Exception exception) {
 				}
 			}
 		}
@@ -390,7 +408,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		return productTargetPlatformVersion;
 	}
 
-	private void _moveContentsToDirectory(File src, File dest) throws IOException {
+	private void _moveContentsToDirectory(File src, File dest) throws Exception {
 		Path srcPath = src.toPath();
 
 		Path source = srcPath.toAbsolutePath();
@@ -404,7 +422,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			new SimpleFileVisitor<Path>() {
 
 				@Override
-				public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
+				public FileVisitResult postVisitDirectory(Path dir, IOException ioException) throws IOException {
 					File file = dir.toFile();
 
 					String dirName = file.getName();
@@ -417,7 +435,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 				@Override
-				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
+				public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
 					Path targetDir = target.resolve(source.relativize(dir));
 
 					if (!Files.exists(targetDir)) {
@@ -434,7 +454,9 @@ public class InitCommand extends BaseCommand<InitArgs> {
 				}
 
 				@Override
-				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) throws IOException {
+				public FileVisitResult visitFile(Path path, BasicFileAttributes basicFileAttributes)
+					throws IOException {
+
 					Path targetFile = target.resolve(source.relativize(path));
 
 					if (!Files.exists(targetFile)) {
@@ -455,7 +477,7 @@ public class InitCommand extends BaseCommand<InitArgs> {
 			});
 	}
 
-	private void _setWorkspacePluginVersion(Path path, String version) throws IOException {
+	private void _setWorkspacePluginVersion(Path path, String version) throws Exception {
 		Path settingsPath = path.resolve("settings.gradle");
 
 		String content = new String(Files.readAllBytes(settingsPath));
@@ -473,5 +495,8 @@ public class InitCommand extends BaseCommand<InitArgs> {
 		"app-servers.gradle", "build.gradle", "build-plugins.gradle", "build-themes.gradle", "sdk.gradle",
 		"settings.gradle", "util.gradle", "versions.gradle"
 	};
+
+	private static List<String> _legacyProductKeys = Arrays.asList(
+		"portal-7.0-ga1", "portal-7.0-ga2", "portal-7.0-ga3", "portal-7.0-ga4", "portal-7.0-ga5", "portal-7.0-ga6");
 
 }

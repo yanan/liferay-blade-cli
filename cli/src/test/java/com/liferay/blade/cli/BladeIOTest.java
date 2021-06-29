@@ -32,8 +32,8 @@ public class BladeIOTest extends BladeTest {
 
 			return new BladeIOTest(outputStream, errorStream);
 		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
+		catch (Exception exception) {
+			throw new RuntimeException(exception);
 		}
 	}
 
@@ -63,7 +63,7 @@ public class BladeIOTest extends BladeTest {
 
 			return false;
 		}
-		catch (Exception e) {
+		catch (Exception exception) {
 			boolean errorMissing = false;
 
 			if (_error == null) {
@@ -83,14 +83,21 @@ public class BladeIOTest extends BladeTest {
 			}
 
 			if (errorMissing) {
-				_error = Optional.ofNullable(e.toString());
+				_error = Optional.ofNullable(exception.toString());
 			}
 
 			return true;
 		}
 	}
 
-	private static String _getErrorString(String error) {
+	private BladeIOTest(StringPrintStream out, StringPrintStream err) throws Exception {
+		super(out, err, System.in);
+
+		_outputStream = out;
+		_errorStream = err;
+	}
+
+	private String _getErrorString(String error) {
 		StringBuilder sb = null;
 
 		try (Scanner scanner = new Scanner(error)) {
@@ -117,13 +124,6 @@ public class BladeIOTest extends BladeTest {
 		}
 
 		return sb.toString();
-	}
-
-	private BladeIOTest(StringPrintStream out, StringPrintStream err) throws Exception {
-		super(out, err, System.in);
-
-		_outputStream = out;
-		_errorStream = err;
 	}
 
 	private Optional<String> _error = null;

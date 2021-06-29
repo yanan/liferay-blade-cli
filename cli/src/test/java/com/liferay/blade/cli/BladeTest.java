@@ -44,13 +44,29 @@ public class BladeTest extends BladeCLI {
 
 	public static final String LIFERAY_VERSION_73 = "7.3";
 
+	public static final String LIFERAY_VERSION_721 = "7.2.1";
+
+	public static final String LIFERAY_VERSION_741 = "7.4.1-1";
+
+	public static final String LIFERAY_VERSION_72104 = "7.2.10.4";
+
+	public static final String LIFERAY_VERSION_73101 = "7.3.10.1";
+
+	public static final String PRODUCT_VERSION_DXP_72 = "dxp-7.2-sp2";
+
+	public static final String PRODUCT_VERSION_DXP_73 = "dxp-7.3-sp1";
+
+	public static final String PRODUCT_VERSION_DXP_74 = "dxp-7.4-ep1";
+
 	public static final String PRODUCT_VERSION_PORTAL_70 = "portal-7.0-ga7";
 
 	public static final String PRODUCT_VERSION_PORTAL_71 = "portal-7.1-ga4";
 
 	public static final String PRODUCT_VERSION_PORTAL_72 = "portal-7.2-ga2";
 
-	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga6";
+	public static final String PRODUCT_VERSION_PORTAL_73 = "portal-7.3-ga8";
+
+	public static final String PRODUCT_VERSION_PORTAL_74 = "portal-7.4-ga2";
 
 	public static BladeTestBuilder builder() {
 		return new BladeTestBuilder();
@@ -76,7 +92,7 @@ public class BladeTest extends BladeCLI {
 		try {
 			Files.createDirectories(_extensionsDir);
 		}
-		catch (IOException ioe) {
+		catch (IOException ioException) {
 		}
 
 		return _extensionsDir;

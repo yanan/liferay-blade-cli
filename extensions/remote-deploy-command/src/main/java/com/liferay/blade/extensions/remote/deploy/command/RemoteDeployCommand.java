@@ -155,10 +155,10 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 				try {
 					_installOrUpdate(outputFile, host, port);
 				}
-				catch (Exception e) {
-					String message = e.getMessage();
+				catch (Exception exception) {
+					String message = exception.getMessage();
 
-					Class<?> exceptionClass = e.getClass();
+					Class<?> exceptionClass = exception.getClass();
 
 					if (message == null) {
 						message = "DeployCommand._deploy threw " + exceptionClass.getSimpleName();
@@ -168,7 +168,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(error);
+					exception.printStackTrace(error);
 				}
 			}
 		);
@@ -258,8 +258,8 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 				try {
 					gradleExec.executeTask("assemble -x check -t");
 				}
-				catch (Exception e) {
-					String message = e.getMessage();
+				catch (Exception exception) {
+					String message = exception.getMessage();
 
 					if (message == null) {
 						message = "Gradle build task failed.";
@@ -269,7 +269,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(error);
+					exception.printStackTrace(error);
 				}
 			}
 
@@ -292,8 +292,9 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 						_installOrUpdate(modifiedFile, host, port);
 					}
 				}
-				catch (Exception e) {
-					String exceptionMessage = (e.getMessage() == null) ? "" : (System.lineSeparator() + e.getMessage());
+				catch (Exception exception) {
+					String exceptionMessage =
+						(exception.getMessage() == null) ? "" : (System.lineSeparator() + exception.getMessage());
 
 					String message = "Error: Bundle Insatllation failed: " + modified + exceptionMessage;
 
@@ -301,7 +302,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 					PrintStream error = bladeCLI.error();
 
-					e.printStackTrace(error);
+					exception.printStackTrace(error);
 				}
 			}
 
@@ -350,8 +351,9 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 					}
 				}
 			}
-			catch (Exception e) {
-				String exceptionMessage = (e.getMessage() == null) ? "" : (System.lineSeparator() + e.getMessage());
+			catch (Exception exception) {
+				String exceptionMessage =
+					(exception.getMessage() == null) ? "" : (System.lineSeparator() + exception.getMessage());
 
 				String message = "Error: Bundle Deployment failed: " + bsn + exceptionMessage;
 
@@ -359,7 +361,7 @@ public class RemoteDeployCommand extends BaseCommand<RemoteDeployArgs> {
 
 				PrintStream error = bladeCLI.error();
 
-				e.printStackTrace(error);
+				exception.printStackTrace(error);
 			}
 		}
 	}
